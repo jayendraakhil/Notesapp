@@ -1,0 +1,138 @@
+body {
+    font-size: 28px;
+    background-image: url(contact.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    cursor: pointer;
+    height: 70px;
+}
+
+.background {
+    background: black;
+    background-blend-mode: darken;
+    background-size: cover;
+    animation: fadeInAnimation ease 3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    /* background-color:white ;	 */
+
+}
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+.nav-list {
+    width: 70%;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo img {
+    width: 150px;
+    height: 50px;
+    border-radius: 80px;
+    margin-left: -57px;
+
+}
+
+.nav-list li {
+    list-style: none;
+    padding: 26px 30px;
+}
+
+.nav-list li a {
+    text-decoration: none;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: white;
+}
+
+.nav-list li a:hover {
+    color: pink;
+}
+
+.lg_btn {
+    margin-left: 6rem;
+    /* padding: 10px 1rem; */
+    border-radius: 50px;
+    color:rgb(0, 0, 0);
+    background-color: rgb(52, 199, 205);
+
+    cursor: auto;
+    position: absolute;
+    right: 450px;
+    margin-top:-20px;
+}
+
+.bg_btn {
+    margin-left: 15rem;
+    /* padding: 10px 1rem; */
+    border-radius: 70px;
+    color: rgb(5, 0, 0);
+    background: #15cedf;
+    cursor: auto;
+    
+
+}
+
+
+.rightnav {
+    width: 30%;
+    text-align: right;
+}
+
+#search {
+    padding: 5px;
+    font-size: 17px;
+    border: 2px solid grey;
+    border-radius: 9px;
+}
+
+.firstsection {
+
+    height: 500px;
+
+
+}
+
+.secondsection {
+    background-color: rgba(243, 234, 109, 0.2);
+    height: 400px;
+}
+
+.box-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    max-width: 75%;
+    border-radius: 10px;
+    border-top-right-radius: 32px;
+    border-bottom-right-radius: 32px;
+    margin:auto ;
+    margin-top: 2cm;
+    height: 90%;
+    background-image: url("static/back.jpg");
+    image-resolution: 520px 1200px ;
+    background-repeat: no-repeat;
+}
