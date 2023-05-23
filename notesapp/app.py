@@ -108,16 +108,9 @@ def logg():
             entry = Loginn(email=email, password=hashed,timestamp=timestamp)
             db.add(entry)  
             db.commit()
-<<<<<<< HEAD
-            # salt_entry = Salt.query.filter_by(email=email).first()
             salt_entry = db.query(Salt).filter_by(email=email).first()
-=======
-#           # salt_entry = Salt.query.filter_by(email=email).first()
-            # salt_entry = db.query(Salt).filter_by(email=email).first()
->>>>>>> 7e8fb63265770b2b4db1a020255329aa08f0c9ca
+          
 
-            # user = Signup.query.filter_by(email=email).first()
-            # user = db.query(Signup).filter_by(email=email).first()
             if salt_entry:
                 salt = salt_entry.salt
                 hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt.encode('utf-8')).decode('utf-8')
