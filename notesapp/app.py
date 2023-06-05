@@ -8,6 +8,8 @@ import mask
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Date, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
+
+
 app = Flask(__name__)
 engine = create_engine('sqlite:///project.db', echo=False)
 db = sessionmaker(autoflush=False, bind=engine)()
@@ -48,6 +50,22 @@ class Reminder(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String(200), nullable=False)
     date_and_time = Column(DateTime, nullable=False)
+
+
+
+class Sticky(Base):
+    __tablename__ = "Sticky"
+    id = Column(Integer, primary_key=True)
+    title = Column(String(200), nullable=False)
+    content = Column(String(), nullable=False)
+
+    
+
+class Notes(Base):
+    __tablename__="Notes"
+    id=Column(Integer,primary_key=True)
+    notes = Column(String(2000),nullable=False)
+    text = Column(String(),nullable=False)
 
 
 # class Sticky(Base):
@@ -185,6 +203,74 @@ def reminder():
     else:
       reminders = db.query(Reminder).all
       return render_template('reminder.html',reminders=reminders)
+
+@app.route('/stickynotes', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        title = request.form('note_title')
+        content = request.form('notes_content')
+        entry = Sticky(title=title, content=content)
+        db.add(entry)
+        db.commit()
+    notes = db.query(Sticky)
+    return render_template('stickynotes.html', notes=notes)
+
+
+
+def save_sticky_notes():
+       if request.method == 'POST':
+        title = request.form('note_title')
+        content = request.form('notes_content')
+        sticky_notes = db.query(Sticky).all()
+        for sticky_note in sticky_notes:
+         entry = Sticky(title=title, content=content)
+        # Perform the saving operation for each sticky note
+        # You can customize this based on your requirements
+        sticky_note.note = sticky_note.note  # Update the note field to itself
+        db.add(entry)
+        db.commit()
+        # return "Sticky entry added successfully!"
+       return render_template("stickynotes.html")
+
+
+def schedule_save():
+
+    save_sticky_notes()
+    print('test')
+    Timer(6, schedule_save).start()
+    return render_template("stickynotes.html")
+
+
+# @app.route('/stickynotes', methods=['GET', 'POST'])
+# def sticky():
+#     if request.method == 'POST':
+#         title = request.form.get('note_title')
+#         content = request.form.get('note_content')
+#         note = Sticky(title=title, content=content)
+#         db.add(note)
+#         db.commit()
+
+#     notes = db.query(Sticky).all()
+
+#     autosave_thread = threading.Thread(target=autosave_notes)
+#     autosave_thread.start()
+
+#     return render_template('stickynotes.html', notes=notes)
+
+
+@app.route("/notes", methods=['GET', 'POST'])
+def notest():
+    if request.method == 'POST':
+        notes = request.form.get('notes')
+        text = request.form.get('text')
+
+        entry = Notes(notes=notes,text=text)
+
+
+        db.add(entry)
+        db.commit()
+        return "SELECT * FROM Notes"
+    return render_template("notes.html")
 
 
 if __name__ == '__main__':
