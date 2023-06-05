@@ -1,6 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>NEW</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+ 
+</head>
+
+<body>
+    <nav class="navbar background">
+        <ul class="nav-list">
+            <div class="logo">
+                <img src="static/logo.jpg">
+            </div>
+            <li><a href="/contact">Contact Us</a></li>
+            <li><a href="/index">logout</a></li>
+        </ul>
+    </nav>
+    <div id="container">
+        <div id="leftone"></div>
+        <div id="lefttwo">
+            <h5>Hi</h5>
+            <input type="text" placeholder="Search all notes">
+            <h5>New Notes</h5>
+            <div id="menu">
+                <a href="/stickynotes">Stickynotes</a> <br>
+                <a href="/notes">Notes</a> <br>
+                <a href="/notes">Notebooks</a> <br>
+            </div>
+            <h5>Calendar</h5>
+            <div id="menu">
+                <a href="/calendar">Calendar</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
