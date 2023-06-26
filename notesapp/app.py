@@ -5,9 +5,13 @@ import datetime
 import re
 import bcrypt
 import mask
+from threading import Timer
+import time
+from plyer import notification 
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Date, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
+import uuid
 
 
 app = Flask(__name__)
@@ -49,33 +53,24 @@ class Reminder(Base):
     __tablename__ = "Reminder"
     id = Column(Integer, primary_key=True)
     title = Column(String(200), nullable=False)
-    date_and_time = Column(DateTime, nullable=False)
-
-
-
-class Sticky(Base):
-    __tablename__ = "Sticky"
-    id = Column(Integer, primary_key=True)
-    title = Column(String(200), nullable=False)
-    content = Column(String(), nullable=False)
-
-    
+    date_and_time = Column(DateTime, nullable=False)    
 
 class Notes(Base):
-    __tablename__="Notes"
-    id=Column(Integer,primary_key=True)
-    notes = Column(String(2000),nullable=False)
-    text = Column(String(),nullable=False)
+    __tablename__ = "Notes"
+    noteId = Column(Integer, primary_key=True)
+    title = Column(String(2000), nullable=False)
+    text = Column(String(), nullable=False)
+    timestamp = Column(String(30), nullable=False)
 
 
-# class Sticky(Base):
-#     __tablename__= "Sticky"
-    
 
-# class Notes(Base):
-#     __tablename__="Notes"
+@app.route("/all notes")
+def notes():
+    return render_template("notes.html")
 
-
+@app.route("/logout")
+def logout():
+    return render_template("index.html")
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -114,7 +109,8 @@ def logg():
 
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             return "Invalid email address. Please try again."
-        
+             
+        uuid_str =str(uuid.uuid5(uuid.NAMESPACE_URL, email))
         # user = Signup.query.filter_by(email=email).first()
         user = db.query(Signup).filter_by(email=email).first()
 
@@ -123,7 +119,7 @@ def logg():
         hashed = bcrypt.hashpw(password.encode('utf-8'), mask.mask)
         if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
         
-            entry = Loginn(email=email, password=hashed,timestamp=timestamp)
+            entry = Loginn(uuid=uuid_str, email=email, password=hashed,timestamp=timestamp)
             db.add(entry)  
             db.commit()
             salt_entry = db.query(Salt).filter_by(email=email).first()
@@ -183,94 +179,67 @@ def sign_up():
         return render_template('sign_up.html')
     
 
-@app.route('/calendar', methods=['GET', 'POST'])
-def reminder():
+@app.route("/calendar", methods=['GET', 'POST'])
+def calendar():
     if request.method == 'POST':
-  
         title = request.form.get('title')
-        date_and_time= request.form.get('date_and_time')
-        print(date_and_time)
-        if date_and_time:
-            input_datetime = datetime.datetime.strptime(date_and_time, '%Y-%m-%dT%H:%M')
+        date_and_time_str = request.form.get('date_and_time')
 
-        entry = Reminder(title=title, date_and_time=input_datetime)
-        current_datetime = datetime.datetime.now()
-        if input_datetime <= current_datetime:
-            return "Invalid date and time. Please try again."
-        db.add(entry)
-        db.commit()
-        return render_template('reminder.html')
-    else:
-      reminders = db.query(Reminder).all
-      return render_template('reminder.html',reminders=reminders)
+        if title and date_and_time_str:
+            date_and_time = datetime.strptime(date_and_time_str, '%Y-%m-%dT%H:%M')
+            new_reminder = Reminder(title=title, date_and_time=date_and_time)
+            db.add(new_reminder)
+            db.commit()
+            schedule_notification(new_reminder)
 
-@app.route('/stickynotes', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        title = request.form('note_title')
-        content = request.form('notes_content')
-        entry = Sticky(title=title, content=content)
-        db.add(entry)
-        db.commit()
-    notes = db.query(Sticky)
-    return render_template('stickynotes.html', notes=notes)
+    reminders = db.query(Reminder).all()
+    return render_template('reminder.html', reminders=reminders)
+    
 
 
+def send_notification(title):
+    notification.notify(
+        title=' Reminder',
+        message=f'{title}',
+        timeout=10  # Notification timeout in seconds
+    )
 
-def save_sticky_notes():
-       if request.method == 'POST':
-        title = request.form('note_title')
-        content = request.form('notes_content')
-        sticky_notes = db.query(Sticky).all()
-        for sticky_note in sticky_notes:
-         entry = Sticky(title=title, content=content)
-        # Perform the saving operation for each sticky note
-        # You can customize this based on your requirements
-        sticky_note.note = sticky_note.note  # Update the note field to itself
-        db.add(entry)
-        db.commit()
-        # return "Sticky entry added successfully!"
-       return render_template("stickynotes.html")
+def schedule_notification(reminder):
+    meeting_time = reminder.date_and_time
+    current_time = datetime.now()
 
+    if meeting_time > current_time:
+        delta = meeting_time - current_time - timedelta(minutes=15)
+        seconds = delta.total_seconds()
 
-def schedule_save():
+        if seconds > 0:
+            t = Timer(seconds, send_notification, args=[reminder.title])
+            t.start()
 
-    save_sticky_notes()
-    print('test')
-    Timer(6, schedule_save).start()
-    return render_template("stickynotes.html")
-
-
-# @app.route('/stickynotes', methods=['GET', 'POST'])
-# def sticky():
-#     if request.method == 'POST':
-#         title = request.form.get('note_title')
-#         content = request.form.get('note_content')
-#         note = Sticky(title=title, content=content)
-#         db.add(note)
-#         db.commit()
-
-#     notes = db.query(Sticky).all()
-
-#     autosave_thread = threading.Thread(target=autosave_notes)
-#     autosave_thread.start()
-
-#     return render_template('stickynotes.html', notes=notes)
 
 
 @app.route("/notes", methods=['GET', 'POST'])
 def notest():
     if request.method == 'POST':
-        notes = request.form.get('notes')
+        note_Id = request.form.get('noteId')
+        title = request.form.get('title')
         text = request.form.get('text')
+        timestamp = str(datetime.datetime.now())
 
-        entry = Notes(notes=notes,text=text)
+        note=Notes(title=title,text=text,timestamp=timestamp)
 
 
-        db.add(entry)
+    
+         
+
+        db.add(note)
+
         db.commit()
-        return "SELECT * FROM Notes"
-    return render_template("notes.html")
+
+    notes = db.query(Notes).all()
+
+    return render_template("notestest.html",notes=notes)
+
 
 
 if __name__ == '__main__':
