@@ -179,6 +179,30 @@ def sign_up():
         return render_template('sign_up.html')
     
 
+
+
+
+@app.route("/notes", methods=['GET', 'POST'])
+def notest():
+    if request.method == 'POST':
+        note_Id = request.form.get('noteId')
+        title = request.form.get('title')
+        text = request.form.get('text')
+        timestamp = str(datetime.datetime.now())
+
+        note=Notes(title=title,text=text,timestamp=timestamp)
+
+
+    
+         
+
+        db.add(note)
+
+        db.commit()
+
+    notes = db.query(Notes).all()
+
+    return render_template("notestest.html",notes=notes)
 @app.route("/calendar", methods=['GET', 'POST'])
 def calendar():
     if request.method == 'POST':
@@ -215,30 +239,6 @@ def schedule_notification(reminder):
         if seconds > 0:
             t = Timer(seconds, send_notification, args=[reminder.title])
             t.start()
-
-
-
-@app.route("/notes", methods=['GET', 'POST'])
-def notest():
-    if request.method == 'POST':
-        note_Id = request.form.get('noteId')
-        title = request.form.get('title')
-        text = request.form.get('text')
-        timestamp = str(datetime.datetime.now())
-
-        note=Notes(title=title,text=text,timestamp=timestamp)
-
-
-    
-         
-
-        db.add(note)
-
-        db.commit()
-
-    notes = db.query(Notes).all()
-
-    return render_template("notestest.html",notes=notes)
 
 
 
