@@ -120,7 +120,7 @@ body {
     height: 400px;
 }
 
-.box-main {
+/* .box-main {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -135,4 +135,4 @@ body {
     background-image: url("static/back.jpg");
     image-resolution: 520px 1200px ;
     background-repeat: no-repeat;
-}
+} */
