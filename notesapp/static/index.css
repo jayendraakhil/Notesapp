@@ -3,11 +3,11 @@
     padding: 0;
 }
 
-body {
+/* body {
     background-image: url("static/index.png");
     background-repeat: no-repeat;
     background-size: cover;
-}
+} */
 
 .navbar {
     display: flex;
@@ -118,3 +118,7 @@ a{
     margin:10px;
 }
 
+#menu a {
+    display:inline-grid;
+    /* margin-bottom: 10px; */
+}
