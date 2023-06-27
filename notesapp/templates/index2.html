@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NEW</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+ 
+</head>
+
+<body>
+    <nav class="navbar background">
+        <ul class="nav-list">
+            <div class="logo">
+                <img src="static/logo.jpg">
+            </div>
+            <li><a href="/contact">Contact Us</a></li>
+            <li><a href="/logout">logout</a></li>
+        </ul>
+    </nav>
+    <div id="container">
+        <div id="leftone"></div>
+        <div id="lefttwo">
+            <h5>Hi,User</h5>
+            <input type="text" placeholder="Search all notes">
+            <h5>New Notes</h5>
+            <div id="menu">
+                <a href="/notes">Notes</a> <br>
+            </div>
+            <h5>Calendar</h5>
+            <div id="menu">
+                <a href="/calendar">Calendar</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
