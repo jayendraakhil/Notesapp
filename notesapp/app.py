@@ -1,17 +1,16 @@
-import DateTime
-from flask import Flask,render_template,request
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-import datetime
-import re
-import bcrypt
-import mask
+from datetime import datetime,timedelta
 from threading import Timer
-import time
-from plyer import notification 
-from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy import Column, Date, Integer, String, DateTime
+from plyer import notification
+from datetime import datetime
+from sqlalchemy import create_engine
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, declarative_base
 import uuid
+import mask
+import re
+import bcrypt
 
 
 app = Flask(__name__)
@@ -23,6 +22,7 @@ Base = declarative_base()
 class Loginn(Base):
      __tablename__ = 'loginn'
      sno = Column(Integer, primary_key=True )
+     uuid = Column(String(36), nullable=False)
      email = Column(String(50), nullable=False)
      password = Column(String(200), nullable=False)
      timestamp = Column(String(30), nullable=False)
@@ -53,16 +53,20 @@ class Reminder(Base):
     __tablename__ = "Reminder"
     id = Column(Integer, primary_key=True)
     title = Column(String(200), nullable=False)
-    date_and_time = Column(DateTime, nullable=False)    
+    date_and_time = Column(DateTime, nullable=False)
 
+    
 class Notes(Base):
-    __tablename__ = "Notes"
-    noteId = Column(Integer, primary_key=True)
-    title = Column(String(2000), nullable=False)
-    text = Column(String(), nullable=False)
+    __tablename__="Notes"
+    id=Column(Integer,primary_key=True)
+    title = Column(String(2000),nullable=False)
+    text = Column(String(),nullable=False)
     timestamp = Column(String(30), nullable=False)
 
 
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 @app.route("/all notes")
 def notes():
@@ -70,9 +74,6 @@ def notes():
 
 @app.route("/logout")
 def logout():
-    return render_template("index.html")
-@app.route("/")
-def home():
     return render_template("index.html")
 
 @app.route("/contact", methods=['GET', 'POST'])
@@ -82,7 +83,7 @@ def contact():
         email = request.form.get('email')
         phone = request.form.get('phone')
         Subject = request.form.get('Subject')
-        timestamp = str(datetime.datetime.now())
+        timestamp = str(datetime.now())
 
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             return "Invalid email address. Please try again."
@@ -105,11 +106,11 @@ def logg():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get("password")
-        timestamp = str(datetime.datetime.now())
+        timestamp = str(datetime.now())
 
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             return "Invalid email address. Please try again."
-             
+        
         uuid_str =str(uuid.uuid5(uuid.NAMESPACE_URL, email))
         # user = Signup.query.filter_by(email=email).first()
         user = db.query(Signup).filter_by(email=email).first()
@@ -123,23 +124,21 @@ def logg():
             db.add(entry)  
             db.commit()
             salt_entry = db.query(Salt).filter_by(email=email).first()
-          
+     
 
             if salt_entry:
                 salt = salt_entry.salt
                 hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt.encode('utf-8')).decode('utf-8')
-                # user = Signup.query.filter_by(email=email, password=hashed_password).first()
                 user = db.query(Signup).filter_by(email=email,password=hashed_password).first()
 
                 if user:
                     # data=get_data_from_cloud() #Connect to middleware,
                     # if data:
                     #     update_html()
-                    return render_template('index1.html',ans="Logged in successfully.")
+                    return render_template('index2.html',ans="Logged in successfully.")
                 else:
                     return "Invalid username or password"
     return render_template('login_form.html')
-
     
 
 @app.route("/sign_up", methods=['GET', 'POST'])
@@ -148,7 +147,7 @@ def sign_up():
         email = request.form.get('email')
         password = request.form.get("password")
         confirm_password = request.form.get("confirm_password")
-        timestamp = str(datetime.datetime.now())
+        timestamp = str(datetime.now())
 
         
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
@@ -160,7 +159,6 @@ def sign_up():
         salt = bcrypt.gensalt().decode('utf-8')
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt.encode('utf-8')).decode('utf-8')
         
-        # user = Signup.query.filter_by(email=email).first()
         user = db.query(Signup).filter_by(email=email).first()
 
         if user:
@@ -180,29 +178,42 @@ def sign_up():
     
 
 
-
-
 @app.route("/notes", methods=['GET', 'POST'])
 def notest():
     if request.method == 'POST':
         note_Id = request.form.get('noteId')
         title = request.form.get('title')
         text = request.form.get('text')
-        timestamp = str(datetime.datetime.now())
+        timestamp = str(datetime.now())
+        # enter = {}
 
+        # entry = Notes(title=title,text=text,timestamp=timestamp)
         note=Notes(title=title,text=text,timestamp=timestamp)
 
-
-    
-         
 
         db.add(note)
 
         db.commit()
-
+       
+        
     notes = db.query(Notes).all()
 
     return render_template("notestest.html",notes=notes)
+
+@app.route("/notes/delete", methods=['POST'])
+def delete_note():
+    if request.method == 'POST':
+        note_id = request.form.get('noteId')
+        note = db.query(Notes).get(note_id)
+
+        if note:
+            db.delete(note)
+            db.commit()
+
+    return redirect('/notes')
+
+
+
 @app.route("/calendar", methods=['GET', 'POST'])
 def calendar():
     if request.method == 'POST':
@@ -225,7 +236,7 @@ def send_notification(title):
     notification.notify(
         title=' Reminder',
         message=f'{title}',
-        timeout=10  # Notification timeout in seconds
+        timeout=900  # Notification timeout in seconds
     )
 
 def schedule_notification(reminder):
@@ -241,9 +252,9 @@ def schedule_notification(reminder):
             t.start()
 
 
-
 if __name__ == '__main__':
     with app.app_context():
 
      Base.metadata.create_all(engine)
      app.run(debug = True)
+
