@@ -4,7 +4,7 @@
 The requirement is to create a website using Flask, HTML, CSS, and JavaScript with an SQLite database. The website allows users to add, save, and view data as needed.Additionally, there should be a reminder feature that allows users to set a specific time, and the reminder  triggers 15 minutes prior to the specified time.
 <h2>2.Installations:</h2>
 
-git clone("")
+git clone("https://github.com/jayendraakhil/Notesapp.git")
 
 Clone this repository
 1.you can change the names in database by first changing them in app.py file and then the same changes in  HTML related files.
