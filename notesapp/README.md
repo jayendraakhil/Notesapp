@@ -8,7 +8,7 @@ git clone("https://github.com/jayendraakhil/Notesapp.git")
 
 Clone this repository
 
-1.you can change the names in database by first changing them in app.py file and then the same changes in  HTML related files.
+1.You can change the names in database by first changing them in app.py file and then the same changes in  HTML related files.
 
 <h2>3.Requirements:</h2>
 python 3.11.2 all requirements.txt dependencies installed, including build and twine. To install run:
