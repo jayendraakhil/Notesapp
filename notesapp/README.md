@@ -17,6 +17,13 @@ python -m pip install -U pip
 pip install -r requirements.txt
 
 <h2>4.Code Block</h2>
+flask==2.2.3
+flask_sqlalchemy==3.0.3
+bcrypt==4.0.1
+plyer==2.1.0
+uuid
+datetime
+sqlite3
 
 <h2>5.Git Clone:</h2>
 
