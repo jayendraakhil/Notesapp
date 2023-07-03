@@ -7,6 +7,7 @@ The requirement is to create a website using Flask, HTML, CSS, and JavaScript wi
 git clone("https://github.com/jayendraakhil/Notesapp.git")
 
 Clone this repository
+
 1.you can change the names in database by first changing them in app.py file and then the same changes in  HTML related files.
 
 <h2>3.Requirements:</h2>
