@@ -68,9 +68,6 @@ class Notes(Base):
 def home():
     return render_template("index.html")
 
-@app.route("/all notes")
-def notes():
-    return render_template("notes.html")
 
 @app.route("/logout")
 def logout():
