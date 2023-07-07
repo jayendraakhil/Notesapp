@@ -69,6 +69,10 @@ def home():
     return render_template("index.html")
 
 
+# @app.route("/index")
+# def home():
+#     return render_template("index.html")
+
 @app.route("/logout")
 def logout():
     return render_template("index.html")
@@ -254,4 +258,3 @@ if __name__ == '__main__':
 
      Base.metadata.create_all(engine)
      app.run(debug = True)
-
