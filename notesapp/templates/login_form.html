@@ -86,9 +86,33 @@ body{
     position: absolute;
     display: block;
 }
+.cancelbtn{
+    width: 45px;
+    margin-left: 102px;    
+}
 .re {
     position: absolute;
 }
+.login{
+width:42px;
+height:20px;
+}
+#set{
+display:flex;
+}
+/* .{
+padding:0px;
+position:absolute;
+top:0px;
+} */
+#one{
+    padding: 0px;
+    position: absolute;
+    top: 187px;
+    left: 96px;
+    font-display: auto;
+}
+
            </style>
            
        </head>
@@ -112,15 +136,11 @@ body{
                        <input type="password" class="form-control" placeholder="" id="password"name="password" required  data-validation-required-message="Please enter your password">
                        <label>Password</label>
                    </div>
-                   <!-- <a href="#">
-                       <span></span>
-                       <span></span>
-                       <span></span>
-                       <span></span>
-                       Submit
-                   </a> -->
+                   <div id="set">
+
                    <button type="submit" class="login" id="sendMessageButton">login</button>
-                   <button><a href="/">back</a></button>
+                   <!-- <div id='one'><a href="/"><button class="" id="sendMessageButton" >back </button></a></div> -->
+                   <div id='one'><a href="/">Back</a></div>
                    <div = re><button type="reset" class="cancelbtn"> reset</button></div>
                      
                </form>
